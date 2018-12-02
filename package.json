@@ -1,0 +1,30 @@
+{
+  "name": "youquity-api",
+  "version": "1.0.0",
+  "description": "YouQuity App API",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "express": "^4.16.4",
+    "mongoose": "^5.3.14"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amandareilly/youquity-api.git"
+  },
+  "author": "Amanda Reilly",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/amandareilly/youquity-api/issues"
+  },
+  "homepage": "https://github.com/amandareilly/youquity-api#readme"
+}
