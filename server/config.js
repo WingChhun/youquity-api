@@ -5,3 +5,4 @@ exports.TEST_PORT = process.env.TEST_PORT || 8080;
 exports.API_URL = process.env.API_URL || 'http://localhost:8080/';
 exports.JWT_SECRET = process.env.JWT_SECRET || 'The quick brown fox jumped over the lazy dog.';
 exports.JWT_EXPIRY = process.env.JWT_EXPIRY || '7d';
+exports.CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:3000/';
