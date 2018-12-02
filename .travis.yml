@@ -1,0 +1,11 @@
+language: node_js
+node_js: node
+services:
+- mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: HwzSdmtG7XmubmNdW9JXAvXdFmd+XUgLMDrLl4AEx1TOPLSQjLU5yOEVia0VZVy5c3+6cheYpmHyVg3yCiM2II02U5HxYL8ST3fOCANBw0bHkByvmCc3rEr5Uw7Q+cxYQpBZoJqnPoyck+lDqHozlCg0bQOzSYMTvwD+AxjuZ+qMM4BasKdKbfl8HG2+RukdYYiVavY/8i5lHS3ujJCON1Lxt2Ex0u+ciJZ/Xy2CPJ9cfIcSIByMAk1KPL+BhgPgpHtuzngaUkd9Abfj7PGVFaCIrvTPhXS43ffbwgV/qCpKikzlSjdLieLmOK0fcnNj9dq4V8MlSQz9Eg55CD19iBILJdjfPhKEZV3aBLGxZDNDKWUlOi7Ual5JiRBiABGIJmKbSPPbVwWZSyWa2VqU2wVFv/at01Io3FS2sBfvp/R+dK19v9PnCMCw5QI88x6kjd/63RurRaAZ2Y9sNvnq2dEBS3Y3baajVOYLrK3qN0aBMUXAyCcNneG8QlVkxdpuGMZLNbvZCmpLtcd5GWeqe6f9SZ+jGucd+m6xDTEm1ckqYLNm2HgWoLcsrexo0Bp8eTfkqaspGwaEeWkzxnXDiJCRufpmkDtPNUvW2Sh3mKvfwAX9kh+tkevriwaiVz7hqqMoDxiddeBnft2Cf5zRQuRRATKb0NNHgYfpH0vuI+w=
+  app: mighty-bastion-47162
+  on:
+    repo: amandareilly/youquity-api
