@@ -143,6 +143,13 @@ companySchema.methods.summarizeShareClasses = function(issuedShareList, pendingL
     return result;
 }
 
+companySchema.methods.updateShareClass = function(updateData) {
+    const shareClass = this.getShareClassBySlug(updateData.classSlug, false);
+    shareClass.set(updateData);
+    this.save();
+    return this.serialize();
+}
+
 companySchema.methods.serialize = function() {
     const assembledSummary = this.assembleSummaryData();
     const pendingList = this.checkForPending();

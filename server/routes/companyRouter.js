@@ -13,6 +13,7 @@ router.post('/', CompanyController.createCompany);
 
 // share class routes
 router.post('/shareClass', CompanyController.addShareClass);
-router.post('/shareClass/:classSlug', CompanyController.getShareClass);
+router.get('/shareClass/:classSlug', CompanyController.getShareClass);
+router.put('/shareClass/:classSlug', CompanyController.updateShareClass);
 
 module.exports = router;

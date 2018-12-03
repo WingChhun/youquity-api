@@ -94,6 +94,38 @@ class CompanyController {
                 res.status(500).json({message: 'Internal server error.'});
             });
     }
+
+    static updateShareClass(req, res) {
+        const requiredFields = ['classSlug'];
+        const validate = checkForRequiredFields(requiredFields, req.body);
+        if (validate) {
+            res.status(400).send(validate);
+        }
+
+        if(req.body.classSlug !== req.params.classSlug) {
+            res.status(400).json({message: 'classSlug in request body must match classSlug in url parameter'}).send();
+        }
+
+        const updatable = ['currentlyOffered', 'authedShares', 'reservedShares', 'currentPrice'];
+        Company
+            .findOne()
+            .then((company) => {
+                const updateData = {classSlug:req.body.classSlug};
+                updatable.forEach((element) => {
+                    if(req.body[element]) {
+                        updateData[element] = req.body[element]
+                    }
+                });
+                return company.updateShareClass(updateData);
+            })
+            .then((company) => {
+                res.status(200).json(company);
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error.'});
+            })
+    }
 }
 
 module.exports = CompanyController;
