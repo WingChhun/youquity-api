@@ -14,6 +14,15 @@ const companySchema = mongoose.Schema({
     }
 });
 
+companySchema.methods.getShareClassBySlug = function(slug) {
+    for(i = 0; i < this.shareClasses.length; i++) {
+        if(this.shareClasses[i].classSlug === slug) {
+            return this.shareClasses[i].serialize();
+        }
+    }
+    return false;
+}
+
 companySchema.methods.countIssuedShares = function() {
     const issued = {};
     this.investmentData.issued.forEach((cert) => {

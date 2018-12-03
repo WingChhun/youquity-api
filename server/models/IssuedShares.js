@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const issuedSharesSchema = mongoose.Schema({
-    certificateNum: {type: Number, required: true, unique: true},
+    certificateNum: {type: Number, required: true},
     certificateTitle: {type: String, required: true, trim: true},
     numShares: {type: Number, required: true},
     pricePerShare: {type: Number, required: true},
