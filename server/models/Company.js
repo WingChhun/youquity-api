@@ -14,10 +14,15 @@ const companySchema = mongoose.Schema({
     }
 });
 
-companySchema.methods.getShareClassBySlug = function(slug) {
+companySchema.methods.getShareClassBySlug = function(slug, serialize = true) {
     for(i = 0; i < this.shareClasses.length; i++) {
         if(this.shareClasses[i].classSlug === slug) {
-            return this.shareClasses[i].serialize();
+            if(serialize) {
+                return this.shareClasses[i].serialize();
+            } else {
+                return this.shareClasses[i];
+            }
+            
         }
     }
     return false;

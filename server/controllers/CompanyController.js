@@ -71,6 +71,29 @@ class CompanyController {
                 res.status(500).json({message: 'Internal server error.'});
             });
     }
+
+    static getShareClass(req, res) {
+        const requiredFields = ['classSlug'];
+        const validate = checkForRequiredFields(requiredFields, req.params);
+        if (validate) {
+            res.status(400).send(validate);
+        }
+
+        Company
+            .findOne()
+            .then((company) => {
+                const shareClass = company.getShareClassBySlug(req.params.classSlug);
+                if(!shareClass) {
+                    res.status(404).json({message: 'Not found.'});
+                } else {
+                    res.status(200).json(shareClass);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error.'});
+            });
+    }
 }
 
 module.exports = CompanyController;
