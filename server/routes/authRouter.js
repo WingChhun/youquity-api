@@ -3,10 +3,13 @@ const bodyParser = require('body-parser');
 
 const AuthController = require('../controllers/AuthController');
 
+const jwtAuth = require('../middleware/jwtAuth');
+
 const router = express.Router();
 
 router.use(bodyParser.json());
 
 router.post('/login', AuthController.authenticateUser);
+router.post('/refresh', jwtAuth, AuthController.refreshToken);
 
 module.exports = router;

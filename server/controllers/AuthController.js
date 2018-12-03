@@ -39,6 +39,26 @@ class AuthController {
                 res.status(500).send({message: 'Internal server error.'});
             });
     }
+
+    static refreshToken(req, res) {
+        const requiredFields = ['email'];
+        const validate = checkForRequiredFields(requiredFields, req.body);
+
+        if (validate) {
+            res.status(400).send(validate);
+        }
+
+        User
+            .find()
+            .byEmail(req.body.email)
+            .then((user) => {
+                res.json(AuthController.createAuthToken(user.serialize()));
+            })
+            .catch((err) => {
+                console.error(err) ;
+                res.status(500).send({message: 'Internal server error.'});
+            });
+    }
 }
 
 module.exports = AuthController;
