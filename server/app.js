@@ -10,7 +10,6 @@ const app = express();
 
 const {CLIENT_ORIGIN} = require('./config');
 const jwtStrategy = require('./auth/strategies');
-const jwtAuth = require('./middleware/jwtAuth');
 
 app.use(
     cors({
@@ -24,7 +23,7 @@ passport.use(jwtStrategy);
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
 
-app.get('/api/', jwtAuth, (req, res) => {
+app.get('/api/', (req, res) => {
     res.json({ok: true});
 });
 

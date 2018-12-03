@@ -26,12 +26,16 @@ class AuthController {
             .find()
             .byEmail(req.body.email)
             .then((user) => {
-                if(user.comparePasswords(req.body.password)) {
-                    const userObj = user.serialize();
-                    userObj.jwt = AuthController.createAuthToken(userObj);
-                    res.status(200).send(JSON.stringify(userObj));
+                if(user) {
+                    if(user.comparePasswords(req.body.password)) {
+                        const userObj = user.serialize();
+                        userObj.jwt = AuthController.createAuthToken(userObj);
+                        res.status(200).send(JSON.stringify(userObj));
+                    } else {
+                        res.status(401).send({message: 'Invalid email address or password.'});
+                    }
                 } else {
-                    res.status(403).send({message: 'Invalid email address or password.'});
+                    res.status(401).send({ message: 'Invalid email address or password.' });
                 }
             })
             .catch((err) => {
