@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 describe('API', function() {
     it('should return status 200 on GET requests', function() {
         return chai.request(app)
-            .get('/api/jsjsjsl')
+            .get('/api')
             .then(function(res) {
                 expect(res).to.have.status(200);
             });
