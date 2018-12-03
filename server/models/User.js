@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
+const bcrypt = require('bcryptjs');
+
 const isEmail = require('validator').isEmail;
 
 const userSchema = mongoose.Schema({
@@ -22,10 +24,13 @@ userSchema.methods.serialize = function () {
     return {
         id: this._id,
         name: this.fullName,
-        email: this.email,
-        password: this.password
+        email: this.email
     }
 };
+
+userSchema.methods.comparePasswords = function(plainTextPass) {
+    return bcrypt.compareSync(plainTextPass, this.password);
+} 
 
 /////// QUERIES ///////
 userSchema.query.byEmail = function (email) {

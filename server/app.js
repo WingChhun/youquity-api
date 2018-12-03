@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const userRouter = require('./routes/userRouter');
+const authRouter = require('./routes/authRouter');
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(
 app.use(morgan('combined'));
 
 app.use('/api/users', userRouter);
+app.use('/api/auth', authRouter);
 
 app.get('/api/', (req, res) => {
     res.json({ok: true});
