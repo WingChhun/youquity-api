@@ -7,23 +7,24 @@ class CompanyController {
         Company
             .countDocuments({}, function(err, count) {
                 if(count > 0) {
-                    res.status(403).json({message: 'Only one company is allowed.  You cannot create another company.'});
-                }
-            })
-        const requiredFields = ['name'];
-        const validate = checkForRequiredFields(requiredFields, req.body);
-        if (validate) {
-            res.status(400).send(validate);
-        }
+                    res.status(403).json({message: 'Only one company is allowed.  You cannot create another company.'}).end();
+                } else {
+                    const requiredFields = ['name'];
+                    const validate = checkForRequiredFields(requiredFields, req.body);
+                    if (validate) {
+                        res.status(400).send(validate);
+                    }
 
-        Company
-            .create({name: req.body.name})
-            .then((company) => {
-                res.status(201).json(company.serialize());
+                    Company
+                        .create({ name: req.body.name })
+                        .then((company) => {
+                            res.status(201).json(company.serialize());
+                        });
+                }
             })
             .catch(err => {
                 console.error(err);
-                res.status(500).json({message: 'Internal server error.'});
+                res.status(500).json({ message: 'Internal server error.' });
             });
     }
 
