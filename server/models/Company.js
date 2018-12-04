@@ -58,16 +58,6 @@ companySchema.methods.getInvestmentById = function(type, id) {
     return false;
 }
 
-companySchema.methods.deleteInvestmentById = async function(type, id) {
-    this.investmentData[type].pull({_id: id});
-    const updatedThis = await this.save();
-    if(updatedThis) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 companySchema.methods.updateInvestment = function (updateData, type) {
     const investment = this.getInvestmentById(type, updateData.id);
     investment.set(updateData);

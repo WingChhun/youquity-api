@@ -247,11 +247,9 @@ class CompanyController {
         Company
             .findOne()
             .then((company) => {
-                if(company.deleteInvestmentById(req.params.id, req.params.id)) {
-                    res.status(200).json({message: `Investment ${req.params.id} deleted.`});
-                } else {
-                    res.status(304).send();
-                }
+                company.investmentData[req.params.type].id(req.params.id).remove();
+                company.save();
+                res.status(200).json({message: `Investment ${req.params.id} deleted.`});
             })
     }
 }
