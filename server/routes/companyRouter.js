@@ -21,5 +21,6 @@ router.post('/shares/pending', CompanyController.addPendingInvestment);
 router.get('/shares/pending', CompanyController.getAllPendingInvestments);
 router.get('/shares/pending/:id', CompanyController.getPendingInvestment);
 router.put('/shares/pending/:id', CompanyController.updatePendingInvestment);
+router.delete('/shares/pending/:id', CompanyController.deletePendingInvestment);
 
 module.exports = router;

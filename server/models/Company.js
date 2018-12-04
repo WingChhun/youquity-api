@@ -29,11 +29,29 @@ companySchema.methods.getShareClassBySlug = function(slug, serialize = true) {
 }
 
 companySchema.methods.getInvestmentById = function(type, id) {
+    const position = this.getInvestmentArrayPositionById(type, id);
+    if(position !== false) { // need strict false due to poss. zero index
+        return this.investmentData[type][position];
+    }
+    return false;
+}
+
+companySchema.methods.deleteInvestmentById = async function(type, id) {
+    this.investmentData[type].pull({_id: id});
+    const updatedThis = await this.save();
+    if(updatedThis) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+companySchema.methods.getInvestmentArrayPositionById = function(type, id) {
     const array = this.investmentData[type];
-    
-    for(i=0; i<array.length; i++) {
-        if(array[i].id === id) {
-            return array[i];
+
+    for (i = 0; i < array.length; i++) {
+        if (array[i].id === id) {
+            return i;
         }
     }
     return false;
@@ -162,10 +180,22 @@ companySchema.methods.updateShareClass = function(updateData) {
 }
 
 companySchema.methods.updatePendingInvestment = function(updateData) {
+    console.log('update data', updateData);
     const pendingInvestment = this.getInvestmentById('pending', updateData.id);
+    console.log('pending Investment', pendingInvestment);
     pendingInvestment.set(updateData);
+    console.log(pendingInvestment);
     this.save();
     return pendingInvestment.serialize();
+}
+
+companySchema.methods.addPendingInvestment = async function(newData) {
+    console.log(newData);
+    const newPendingInvestment = this.investmentData.pending.create(newData);
+    this.investmentData.pending.push(newPendingInvestment);
+    const updatedThis = await this.save();
+    if(updatedThis) return newPendingInvestment.serialize();
+
 }
 
 companySchema.methods.serialize = function() {

@@ -23,12 +23,12 @@ pendingSharesSchema.methods.serialize = function () {
             {
                 stepSlug: 'subsAgmt',
                 stepName: 'Subscription Agreement Received',
-                stepComplete: this.subsAgmt
+                stepComplete: this.workflow.subsAgmt
             },
             {
                 stepSlug: 'pymtRecd',
                 stepName: 'Payment Received',
-                stepComplete: this.pymtRecd
+                stepComplete: this.workflow.pymtRecd
             }
         ]
     }

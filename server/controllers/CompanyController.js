@@ -151,10 +151,11 @@ class CompanyController {
                             pymtRecd: req.body.pymtRecd
                         }
                     }
-                    company.investmentData.pending.push(pendingShares);
-                    company.save();
-                    res.status(201).json(company.serialize());
+                    return company.addPendingInvestment(pendingShares);
                 }
+            })
+            .then((pendingShares) => {
+                res.status(201).json(pendingShares);
             })
             .catch(err => {
                 console.error(err);
@@ -189,7 +190,6 @@ class CompanyController {
     }
 
     static updatePendingInvestment(req, res) {
-        console.log('inside function');
         const requiredFields = ['id'];
         const validate = checkForRequiredFields(requiredFields, req.body);
         if (validate) {
@@ -200,7 +200,7 @@ class CompanyController {
             res.status(400).json({ message: 'id in request body must match id in url parameter' }).send();
         }
 
-        const updatable = ['certificateTitle', 'numShares', 'shareClassSlug', 'subsAgmt', 'pymtRecd'];
+        const updatable = ['certificateTitle', 'numShares', 'shareClassSlug', 'workflow'];
         Company
             .findOne()
             .then((company) => {
@@ -210,6 +210,7 @@ class CompanyController {
                         updateData[element] = req.body[element]
                     }
                 });
+
                 return company.updatePendingInvestment(updateData);
             })
             .then((pendingInvestment) => {
@@ -218,6 +219,18 @@ class CompanyController {
             .catch(err => {
                 console.error(err);
                 res.status(500).json({ message: 'Internal server error.' });
+            })
+    }
+
+    static deletePendingInvestment(req, res) {
+        Company
+            .findOne()
+            .then((company) => {
+                if(company.deleteInvestmentById('pending', req.params.id)) {
+                    res.status(200).json({message: `Investment ${req.params.id} deleted.`});
+                } else {
+                    res.status(304).send();
+                }
             })
     }
 }
