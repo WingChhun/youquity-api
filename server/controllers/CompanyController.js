@@ -187,6 +187,39 @@ class CompanyController {
                 res.status(500).json({message: 'Internal server error.'});
             });
     }
+
+    static updatePendingInvestment(req, res) {
+        console.log('inside function');
+        const requiredFields = ['id'];
+        const validate = checkForRequiredFields(requiredFields, req.body);
+        if (validate) {
+            res.status(400).send(validate);
+        }
+
+        if (req.body.id !== req.params.id) {
+            res.status(400).json({ message: 'id in request body must match id in url parameter' }).send();
+        }
+
+        const updatable = ['certificateTitle', 'numShares', 'shareClassSlug', 'subsAgmt', 'pymtRecd'];
+        Company
+            .findOne()
+            .then((company) => {
+                const updateData = { id: req.body.id };
+                updatable.forEach((element) => {
+                    if (req.body[element]) {
+                        updateData[element] = req.body[element]
+                    }
+                });
+                return company.updatePendingInvestment(updateData);
+            })
+            .then((pendingInvestment) => {
+                res.status(200).json(pendingInvestment);
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: 'Internal server error.' });
+            })
+    }
 }
 
 module.exports = CompanyController;

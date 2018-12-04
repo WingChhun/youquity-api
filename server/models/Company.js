@@ -161,6 +161,13 @@ companySchema.methods.updateShareClass = function(updateData) {
     return this.serialize();
 }
 
+companySchema.methods.updatePendingInvestment = function(updateData) {
+    const pendingInvestment = this.getInvestmentById('pending', updateData.id);
+    pendingInvestment.set(updateData);
+    this.save();
+    return pendingInvestment.serialize();
+}
+
 companySchema.methods.serialize = function() {
     const assembledSummary = this.assembleSummaryData();
     const pendingList = this.checkForPending();
