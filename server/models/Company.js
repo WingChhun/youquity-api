@@ -36,6 +36,13 @@ companySchema.methods.updateShareClass = function (updateData) {
     return this.serialize();
 }
 
+companySchema.methods.addShareClass = async function (newData, type) {
+    const newShareClass = this.shareClasses.create(newData);
+    this.shareClasses.push(newShareClass);
+    const updatedThis = await this.save();
+    if (updatedThis) return newShareClass.serialize();
+}
+
 /////// INVESTMENT METHODS //////
 
 companySchema.methods.getInvestmentArrayPositionById = function (type, id) {

@@ -61,10 +61,11 @@ class CompanyController {
                         reservedShares: req.body.reservedShares,
                         currentPrice: req.body.currentPrice
                     }
-                    company.shareClasses.push(shareClass);
-                    company.save();
-                    res.status(201).json(company.serialize());
+                    return company.addShareClass(shareClass);
                 }
+            })
+            .then((shareClass) => {
+                res.status(201).json(shareClass);
             })
             .catch(err => {
                 console.error(err);
