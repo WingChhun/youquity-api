@@ -13,6 +13,7 @@ class CompanyController {
                     const validate = checkForRequiredFields(requiredFields, req.body);
                     if (validate) {
                         res.status(400).send(validate);
+                        return;
                     }
 
                     Company
