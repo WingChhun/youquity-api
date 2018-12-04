@@ -127,11 +127,23 @@ class CompanyController {
             })
     }
 
-    static addPendingInvestment(req, res) {
-        const requiredFields = ['certificateTitle', 'numShares', 'requestDate', 'shareClassSlug', 'subsAgmt', 'pymtRecd'];
+    static addInvestment(req, res) {
+        const pendingFields = ['requestDate', 'subsAgmt', 'pymtRecd'];
+
+        const issuedFields = ['certificateNum', 'pricePerShare', 'purchaseDate', 'issueDate'];
+
+        const sharedFields = ['certificateTitle', 'numShares', 'shareClassSlug'];
+
+        let requiredFields;
+        if(req.params.type === 'pending') {
+            requiredFields = [...pendingFields, ...sharedFields];
+        } else {
+            requiredFields = [...issuedFields, ...sharedFields];
+        }
         const validate = checkForRequiredFields(requiredFields, req.body);
         if (validate) {
             res.status(400).send(validate);
+            return;
         }
 
         Company
@@ -141,21 +153,30 @@ class CompanyController {
                 if (!existingClass) {
                     res.status(404).json({ message: `Share class with slug ${req.body.shareClassSlug} does not exist.` });
                 } else {
-                    const pendingShares = {
+                    const newData = {
                         certificateTitle: req.body.certificateTitle,
                         numShares: req.body.numShares,
-                        requestDate: req.body.requestDate,
-                        shareClassSlug: req.body.shareClassSlug,
-                        workflow: {
+                        shareClassSlug: req.body.shareClassSlug
+                    };
+
+                    if(req.params.type === 'pending') {
+                        newData.requestDate = req.body.requestDate;
+                        newData.workflow = {
                             subsAgmt: req.body.subsAgmt,
                             pymtRecd: req.body.pymtRecd
-                        }
+                        };
+                    } else {
+                        newData.purchaseDate = req.body.purchaseDate;
+                        newData.pricePerShare = req.body.pricePerShare;
+                        newData.issueDate = req.body.issueDate;
+                        newData.certificateNum = req.body.certificateNum;
                     }
-                    return company.addPendingInvestment(pendingShares);
+
+                    return company.addInvestment(newData, req.params.type);
                 }
             })
-            .then((pendingShares) => {
-                res.status(201).json(pendingShares);
+            .then((createdInvestment) => {
+                res.status(201).json(createdInvestment);
             })
             .catch(err => {
                 console.error(err);
@@ -163,12 +184,12 @@ class CompanyController {
             });
     }
 
-    static getPendingInvestment(req, res) {
+    static getInvestment(req, res) {
         Company
             .findOne()
             .then((company) => {
-                const pending = company.getInvestmentById('pending', req.params.id);
-                res.status(200).json(pending.serialize());
+                const investment = company.getInvestmentById(req.params.type, req.params.id);
+                res.status(200).json(investment.serialize());
             })
             .catch(err => {
                 console.error(err);
@@ -176,12 +197,12 @@ class CompanyController {
             });
     }
 
-    static getAllPendingInvestments(req, res) {
+    static getAllInvestments(req, res) {
         Company
             .findOne()
             .then((company) => {
                 const serialized = company.serialize();
-                res.status(200).json(serialized.investmentData.pending);
+                res.status(200).json(serialized.investmentData[req.params.type]);
             })
             .catch(err => {
                 console.error(err);
@@ -189,7 +210,7 @@ class CompanyController {
             });
     }
 
-    static updatePendingInvestment(req, res) {
+    static updateInvestment(req, res) {
         const requiredFields = ['id'];
         const validate = checkForRequiredFields(requiredFields, req.body);
         if (validate) {
@@ -211,7 +232,7 @@ class CompanyController {
                     }
                 });
 
-                return company.updatePendingInvestment(updateData);
+                return company.updateInvestment(updateData, 'pending');
             })
             .then((pendingInvestment) => {
                 res.status(200).json(pendingInvestment);
@@ -222,11 +243,11 @@ class CompanyController {
             })
     }
 
-    static deletePendingInvestment(req, res) {
+    static deleteInvestment(req, res) {
         Company
             .findOne()
             .then((company) => {
-                if(company.deleteInvestmentById('pending', req.params.id)) {
+                if(company.deleteInvestmentById(req.params.id, req.params.id)) {
                     res.status(200).json({message: `Investment ${req.params.id} deleted.`});
                 } else {
                     res.status(304).send();

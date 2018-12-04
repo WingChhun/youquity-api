@@ -14,6 +14,7 @@ const companySchema = mongoose.Schema({
     }
 });
 
+/////// SHARE CLASS METHODS ///////
 companySchema.methods.getShareClassBySlug = function(slug, serialize = true) {
     for(i = 0; i < this.shareClasses.length; i++) {
         if(this.shareClasses[i].classSlug === slug) {
@@ -28,7 +29,28 @@ companySchema.methods.getShareClassBySlug = function(slug, serialize = true) {
     return false;
 }
 
+companySchema.methods.updateShareClass = function (updateData) {
+    const shareClass = this.getShareClassBySlug(updateData.classSlug, false);
+    shareClass.set(updateData);
+    this.save();
+    return this.serialize();
+}
+
+/////// INVESTMENT METHODS //////
+
+companySchema.methods.getInvestmentArrayPositionById = function (type, id) {
+    const array = this.investmentData[type];
+
+    for (i = 0; i < array.length; i++) {
+        if (array[i].id === id) {
+            return i;
+        }
+    }
+    return false;
+}
+
 companySchema.methods.getInvestmentById = function(type, id) {
+
     const position = this.getInvestmentArrayPositionById(type, id);
     if(position !== false) { // need strict false due to poss. zero index
         return this.investmentData[type][position];
@@ -46,17 +68,21 @@ companySchema.methods.deleteInvestmentById = async function(type, id) {
     }
 }
 
-companySchema.methods.getInvestmentArrayPositionById = function(type, id) {
-    const array = this.investmentData[type];
-
-    for (i = 0; i < array.length; i++) {
-        if (array[i].id === id) {
-            return i;
-        }
-    }
-    return false;
+companySchema.methods.updateInvestment = function (updateData, type) {
+    const investment = this.getInvestmentById(type, updateData.id);
+    investment.set(updateData);
+    this.save();
+    return investment.serialize();
 }
 
+companySchema.methods.addInvestment = async function (newData, type) {
+    const newInvestment = this.investmentData[type].create(newData);
+    this.investmentData[type].push(newInvestment);
+    const updatedThis = await this.save();
+    if (updatedThis) return newInvestment.serialize();
+}
+
+/////// COMPANY SUMMARY METHODS ///////
 companySchema.methods.countIssuedShares = function() {
     const issued = {};
     this.investmentData.issued.forEach((cert) => {
@@ -172,31 +198,7 @@ companySchema.methods.summarizeShareClasses = function(issuedShareList, pendingL
     return result;
 }
 
-companySchema.methods.updateShareClass = function(updateData) {
-    const shareClass = this.getShareClassBySlug(updateData.classSlug, false);
-    shareClass.set(updateData);
-    this.save();
-    return this.serialize();
-}
-
-companySchema.methods.updatePendingInvestment = function(updateData) {
-    console.log('update data', updateData);
-    const pendingInvestment = this.getInvestmentById('pending', updateData.id);
-    console.log('pending Investment', pendingInvestment);
-    pendingInvestment.set(updateData);
-    console.log(pendingInvestment);
-    this.save();
-    return pendingInvestment.serialize();
-}
-
-companySchema.methods.addPendingInvestment = async function(newData) {
-    console.log(newData);
-    const newPendingInvestment = this.investmentData.pending.create(newData);
-    this.investmentData.pending.push(newPendingInvestment);
-    const updatedThis = await this.save();
-    if(updatedThis) return newPendingInvestment.serialize();
-
-}
+/////// STANDARD COMPANY METHODS ///////
 
 companySchema.methods.serialize = function() {
     const assembledSummary = this.assembleSummaryData();

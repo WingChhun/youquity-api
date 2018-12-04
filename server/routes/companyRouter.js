@@ -16,11 +16,13 @@ router.post('/shareClass', CompanyController.addShareClass);
 router.get('/shareClass/:classSlug', CompanyController.getShareClass);
 router.put('/shareClass/:classSlug', CompanyController.updateShareClass);
 
-// pending shares routes
-router.post('/shares/pending', CompanyController.addPendingInvestment);
-router.get('/shares/pending', CompanyController.getAllPendingInvestments);
-router.get('/shares/pending/:id', CompanyController.getPendingInvestment);
-router.put('/shares/pending/:id', CompanyController.updatePendingInvestment);
-router.delete('/shares/pending/:id', CompanyController.deletePendingInvestment);
+// shares routes
+router.post('/shares/:type', CompanyController.addInvestment);
+router.get('/shares/:type', CompanyController.getAllInvestments);
+router.get('/shares/:type/:id', CompanyController.getInvestment);
+router.delete('/shares/:type/:id', CompanyController.deleteInvestment);
+
+// update pending shares route (issued cannot be updated)
+router.put('/shares/pending/:id', CompanyController.updateInvestment);
 
 module.exports = router;
