@@ -5,7 +5,7 @@ const app = require('../server/app');
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-describe('API', function() {
+describe('Generic API Endpoint', function() {
     it('should return status 200 on GET requests', function() {
         return chai.request(app)
             .get('/api')
