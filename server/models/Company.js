@@ -28,6 +28,17 @@ companySchema.methods.getShareClassBySlug = function(slug, serialize = true) {
     return false;
 }
 
+companySchema.methods.getInvestmentById = function(type, id) {
+    const array = this.investmentData[type];
+    
+    for(i=0; i<array.length; i++) {
+        if(array[i].id === id) {
+            return array[i];
+        }
+    }
+    return false;
+}
+
 companySchema.methods.countIssuedShares = function() {
     const issued = {};
     this.investmentData.issued.forEach((cert) => {
@@ -43,7 +54,7 @@ companySchema.methods.countIssuedShares = function() {
 companySchema.methods.checkForPending = function() {
     const classList = {};
     const classCount = this.shareClasses.length;
-    const pendingFoundCount = 0;
+    let pendingFoundCount = 0;
     const pendingList = this.investmentData.pending;
 
     for(i = 0; i < pendingList.length; i++) {

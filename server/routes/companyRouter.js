@@ -16,4 +16,9 @@ router.post('/shareClass', CompanyController.addShareClass);
 router.get('/shareClass/:classSlug', CompanyController.getShareClass);
 router.put('/shareClass/:classSlug', CompanyController.updateShareClass);
 
+// pending shares routes
+router.post('/shares/pending', CompanyController.addPendingInvestment);
+router.get('/shares/pending', CompanyController.getAllPendingInvestments);
+router.get('/shares/pending/:id', CompanyController.getPendingInvestment);
+
 module.exports = router;

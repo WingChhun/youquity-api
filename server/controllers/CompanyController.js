@@ -126,6 +126,67 @@ class CompanyController {
                 res.status(500).json({message: 'Internal server error.'});
             })
     }
+
+    static addPendingInvestment(req, res) {
+        const requiredFields = ['certificateTitle', 'numShares', 'requestDate', 'shareClassSlug', 'subsAgmt', 'pymtRecd'];
+        const validate = checkForRequiredFields(requiredFields, req.body);
+        if (validate) {
+            res.status(400).send(validate);
+        }
+
+        Company
+            .findOne()
+            .then((company) => {
+                const existingClass = company.getShareClassBySlug(req.body.shareClassSlug);
+                if (!existingClass) {
+                    res.status(404).json({ message: `Share class with slug ${req.body.shareClassSlug} does not exist.` });
+                } else {
+                    const pendingShares = {
+                        certificateTitle: req.body.certificateTitle,
+                        numShares: req.body.numShares,
+                        requestDate: req.body.requestDate,
+                        shareClassSlug: req.body.shareClassSlug,
+                        workflow: {
+                            subsAgmt: req.body.subsAgmt,
+                            pymtRecd: req.body.pymtRecd
+                        }
+                    }
+                    company.investmentData.pending.push(pendingShares);
+                    company.save();
+                    res.status(201).json(company.serialize());
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: 'Internal server error.' });
+            });
+    }
+
+    static getPendingInvestment(req, res) {
+        Company
+            .findOne()
+            .then((company) => {
+                const pending = company.getInvestmentById('pending', req.params.id);
+                res.status(200).json(pending.serialize());
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error.'});
+            });
+    }
+
+    static getAllPendingInvestments(req, res) {
+        Company
+            .findOne()
+            .then((company) => {
+                const serialized = company.serialize();
+                res.status(200).json(serialized.investmentData.pending);
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error.'});
+            });
+    }
 }
 
 module.exports = CompanyController;
