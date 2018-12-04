@@ -96,6 +96,19 @@ class CompanyController {
             });
     }
 
+    static getAllShareClasses(req, res) {
+        Company
+            .findOne()
+            .then((company) => {
+                const serialized = company.serialize();
+                res.status(200).json(serialized.companyData.shareClasses);
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: 'Internal server error.' });
+            });
+    }
+
     static updateShareClass(req, res) {
         const requiredFields = ['classSlug'];
         const validate = checkForRequiredFields(requiredFields, req.body);

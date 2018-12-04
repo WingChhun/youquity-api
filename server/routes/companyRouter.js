@@ -14,6 +14,7 @@ router.post('/', CompanyController.createCompany);
 // share class routes
 router.post('/shareClass', CompanyController.addShareClass);
 router.get('/shareClass/:classSlug', CompanyController.getShareClass);
+router.get('/shareClass', CompanyController.getAllShareClasses);
 router.put('/shareClass/:classSlug', CompanyController.updateShareClass);
 
 // shares routes
