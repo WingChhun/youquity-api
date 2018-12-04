@@ -33,7 +33,7 @@ companySchema.methods.updateShareClass = function (updateData) {
     const shareClass = this.getShareClassBySlug(updateData.classSlug, false);
     shareClass.set(updateData);
     this.save();
-    return this.serialize();
+    return shareClass;
 }
 
 companySchema.methods.addShareClass = async function (newData, type) {

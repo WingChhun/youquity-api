@@ -119,8 +119,8 @@ class CompanyController {
                 });
                 return company.updateShareClass(updateData);
             })
-            .then((company) => {
-                res.status(200).json(company);
+            .then((shareClass) => {
+                res.status(200).json(shareClass.serialize());
             })
             .catch(err => {
                 console.error(err);
