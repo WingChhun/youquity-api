@@ -20,6 +20,17 @@ const testPendingInvestment = {
     pymtRecd: faker.random.boolean()
 };
 
+const testUpdatedPendingInvestment = {
+    certificateTitle: faker.name.findName(),
+    numShares: faker.random.number({ min: 1000, max: 50000 }),
+    shareClassSlug: faker.lorem.word(),
+    requestDate: faker.date.between('2018-06-01', '2018-12-01'),
+    workflow: {
+        subsAgmt: faker.random.boolean(),
+        pymtRecd: faker.random.boolean()
+    }
+};
+
 const testIssuedInvestment = {
     certificateTitle: faker.name.findName(),
     numShares: faker.random.number({ min: 1000, max: 50000 }),
@@ -30,4 +41,4 @@ const testIssuedInvestment = {
     pricePerShare: faker.random.number({min: 1, max: 50})
 };
 
-module.exports = {testCompany, testShareClass, testPendingInvestment, testIssuedInvestment};
+module.exports = {testCompany, testShareClass, testPendingInvestment, testIssuedInvestment, testUpdatedPendingInvestment};

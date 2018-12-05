@@ -21,9 +21,9 @@ router.put('/shareClass/:classSlug', CompanyController.updateShareClass);
 router.post('/shares/:type', CompanyController.addInvestment);
 router.get('/shares/:type', CompanyController.getAllInvestments);
 router.get('/shares/:type/:id', CompanyController.getInvestment);
-router.delete('/shares/:type/:id', CompanyController.deleteInvestment);
 
-// update pending shares route (issued cannot be updated)
+// pending shares route (issued cannot be updated or deleted)
 router.put('/shares/pending/:id', CompanyController.updateInvestment);
+router.delete('/shares/pending/:id', CompanyController.deleteInvestment);
 
 module.exports = router;

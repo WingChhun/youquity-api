@@ -233,10 +233,12 @@ class CompanyController {
         const validate = checkForRequiredFields(requiredFields, req.body);
         if (validate) {
             res.status(400).send(validate);
+            return;
         }
 
         if (req.body.id !== req.params.id) {
             res.status(400).json({ message: 'id in request body must match id in url parameter' }).send();
+            return;
         }
 
         const updatable = ['certificateTitle', 'numShares', 'shareClassSlug', 'workflow'];
@@ -265,7 +267,7 @@ class CompanyController {
         Company
             .findOne()
             .then((company) => {
-                company.investmentData[req.params.type].id(req.params.id).remove();
+                company.investmentData.pending.id(req.params.id).remove();
                 company.save();
                 res.status(200).json({message: `Investment ${req.params.id} deleted.`});
             })
