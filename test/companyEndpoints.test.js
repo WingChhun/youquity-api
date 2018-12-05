@@ -37,7 +37,24 @@ describe('Company Endpoints', function () {
     });
 
     describe('/api/company', function() {
-        it('should add a new company on POST', function(done) {
+        it('POST: should not add a company without a name', function(done) {
+            chai.request(app)
+                .post('/api/company')
+                .send({brokenRequest: 'Broken'})
+                .then((res) => {
+                    expect(res).to.have.status(400);
+                    return Company.countDocuments();
+                })
+                .then((count) => {
+                    expect(count).to.equal(0);
+                    done();
+                })
+                .catch((err) => {
+                    console.error(err);
+                    done(err);
+                });
+        });
+        it('POST: should add a new company', function(done) {
             chai.request(app)
                 .post('/api/company')
                 .send(testCompany)
@@ -53,9 +70,10 @@ describe('Company Endpoints', function () {
                 })
                 .catch(err => {
                     console.error(err);
+                    done(err);
                 })
         });
-        it('should not add a second company on POST', function() {
+        it('POST: should not add a second company', function() {
             return chai.request(app)
                 .post('/api/company')
                 .send(testCompany)
@@ -70,7 +88,7 @@ describe('Company Endpoints', function () {
                     console.error(err);
                 })
         });
-        it('should return the existing company on POST', function() {
+        it('GET: should return the existing company', function() {
             return Company
                 .create(testCompany)
                 .then(() => {
