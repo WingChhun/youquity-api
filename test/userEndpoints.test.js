@@ -53,6 +53,15 @@ describe('User Endpoints', function () {
                 })
                 .then((user) => {
                     expect(user.comparePasswords(testUser.password)).to.be.true;
+                    
+                    // login this user so we can authenticate
+                    // the rest of the tests
+                    return chai.request(app)
+                        .post('/api/auth/login')
+                        .send(testUser);
+                })
+                .then((res) => {
+                    jwt = res.body.jwt;
                     done();
                 })
                 .catch(err => {
@@ -62,6 +71,7 @@ describe('User Endpoints', function () {
         it('GET: should get all users', function(done) {
             chai.request(app)
                 .get('/api/users')
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body.users).to.be.an.instanceof(Array);
@@ -78,6 +88,7 @@ describe('User Endpoints', function () {
         it('GET: should get a user by id', function(done) {
             chai.request(app)
                 .get(`/api/users/byId/${userId}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body.id).to.equal(userId);
@@ -94,6 +105,7 @@ describe('User Endpoints', function () {
         it('GET: should get a user by email', function(done) {
             chai.request(app)
                 .get(`/api/users/byEmail/${testUser.email}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body.id).to.equal(userId);
@@ -110,6 +122,7 @@ describe('User Endpoints', function () {
         it('POST: should return jwt on successful authentication', function(done) {
             chai.request(app)
                 .post('/api/auth/login')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(testUser)
                 .then((res) => {
                     jwt = res.body.jwt;
@@ -131,6 +144,7 @@ describe('User Endpoints', function () {
             let {email, ...incomplete} = testUser;
             chai.request(app)
                 .post('/api/auth/login')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(incomplete)
                 .then((res) => {
                     expect(res).to.have.status(400);
@@ -153,6 +167,7 @@ describe('User Endpoints', function () {
             broken.email = 'broken@broken.broken';
             chai.request(app)
                 .post('/api/auth/login')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(broken)
                 .then((res) => {
                     expect(res).to.have.status(401);
