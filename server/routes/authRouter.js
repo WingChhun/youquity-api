@@ -10,6 +10,6 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 router.post('/login', AuthController.authenticateUser);
-router.post('/refresh', jwtAuth, AuthController.refreshToken);
+router.get('/refresh', jwtAuth, AuthController.refreshToken);
 
 module.exports = router;

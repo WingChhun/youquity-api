@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const {JWT_SECRET, JWT_EXPIRY} = require('../config');
+const jwtDecode = require('jwt-decode');
 
 const User = require('../models/User');
 
@@ -20,6 +21,7 @@ class AuthController {
 
         if(validate) {
             res.status(400).send(validate);
+            return;
         }
 
         User
@@ -29,8 +31,8 @@ class AuthController {
                 if(user) {
                     if(user.comparePasswords(req.body.password)) {
                         const userObj = user.serialize();
-                        userObj.jwt = AuthController.createAuthToken(userObj);
-                        res.status(200).send(JSON.stringify(userObj));
+                        const jwt = AuthController.createAuthToken(userObj);
+                        res.status(200).json({jwt: jwt});
                     } else {
                         res.status(401).send({message: 'Invalid email address or password.'});
                     }
@@ -45,23 +47,17 @@ class AuthController {
     }
 
     static refreshToken(req, res) {
-        const requiredFields = ['email'];
-        const validate = checkForRequiredFields(requiredFields, req.body);
+        const jwt = req.headers.authorization.split(' ')[1];
+        const requiredFields = ['jwt'];
+        const validate = checkForRequiredFields(requiredFields, {jwt});
 
         if (validate) {
             res.status(400).send(validate);
+            return;
         }
-
-        User
-            .find()
-            .byEmail(req.body.email)
-            .then((user) => {
-                res.json(AuthController.createAuthToken(user.serialize()));
-            })
-            .catch((err) => {
-                console.error(err) ;
-                res.status(500).send({message: 'Internal server error.'});
-            });
+        const user = jwtDecode(jwt).user;
+        
+        res.status(201).json({jwt: AuthController.createAuthToken(user)});
     }
 }
 
