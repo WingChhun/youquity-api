@@ -17,7 +17,7 @@ pendingSharesSchema.methods.serialize = function () {
         id: this._id,
         certificateTitle: this.certificateTitle,
         numShares: this.numShares,
-        requestDate: this.purchaseDate,
+        requestDate: this.requestDate,
         shareClassSlug: this.shareClassSlug,
         workflow: [
             {

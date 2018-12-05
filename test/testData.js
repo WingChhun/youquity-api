@@ -11,4 +11,23 @@ const testShareClass = {
     currentPrice: faker.random.number({ min: 1, max: 50 })
 };
 
-module.exports = {testCompany, testShareClass};
+const testPendingInvestment = {
+    certificateTitle: faker.name.findName(),
+    numShares: faker.random.number({min: 1000, max: 50000}),
+    shareClassSlug: testShareClass.classSlug,
+    requestDate: faker.date.between('2018-06-01', '2018-12-01'),
+    subsAgmt: faker.random.boolean(),
+    pymtRecd: faker.random.boolean()
+};
+
+const testIssuedInvestment = {
+    certificateTitle: faker.name.findName(),
+    numShares: faker.random.number({ min: 1000, max: 50000 }),
+    shareClassSlug: testShareClass.classSlug,
+    purchaseDate: faker.date.between('2018-06-01', '2018-12-01'),
+    issueDate: faker.date.between('2018-12-01', '2018-12-05'),
+    certificateNum: faker.random.number({min: 100, max: 500}),
+    pricePerShare: faker.random.number({min: 1, max: 50})
+};
+
+module.exports = {testCompany, testShareClass, testPendingInvestment, testIssuedInvestment};
