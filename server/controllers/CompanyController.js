@@ -130,7 +130,7 @@ class CompanyController {
             .then((company) => {
                 const updateData = {classSlug:req.body.classSlug};
                 updatable.forEach((element) => {
-                    if(req.body[element]) {
+                    if(req.body[element] !== undefined) {
                         updateData[element] = req.body[element]
                     }
                 });
