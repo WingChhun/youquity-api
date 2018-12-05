@@ -4,7 +4,7 @@ const app = require('../server/app');
 const mongoose = require('mongoose');
 
 const { runServer, closeServer } = require('../server/server');
-const { TEST_DATABASE_URL, TEST_PORT, AUTH_BYPASS_HEADER } = require('../server/config');
+const { TEST_DATABASE_URL, TEST_PORT} = require('../server/config');
 
 // models
 const Company = require('../server/models/Company');
@@ -13,14 +13,27 @@ const { expect } = chai;
 chai.use(chaiHttp);
 
 // import dummy data
-const {testCompany} = require('./testData');
+const {testCompany, testUser} = require('./testData');
 
+let jwt;
 
 describe('Company Endpoints', function () {
     // start server
     before(function() {
         return runServer(TEST_DATABASE_URL, TEST_PORT)
         .then(() => {
+            // create and authenticate a user
+            return chai.request(app)
+                .post('/api/users')
+                .send(testUser);
+        })
+        .then((res) => {
+            return chai.request(app)
+                .post('/api/auth/login')
+                .send(testUser);
+        })
+        .then((res) => {
+            jwt = res.body.jwt;
         });
     });
 
@@ -40,6 +53,7 @@ describe('Company Endpoints', function () {
         it('POST: should not add a company without a name', function(done) {
             chai.request(app)
                 .post('/api/company')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send({brokenRequest: 'Broken'})
                 .then((res) => {
                     expect(res).to.have.status(400);
@@ -57,6 +71,7 @@ describe('Company Endpoints', function () {
         it('POST: should add a new company', function(done) {
             chai.request(app)
                 .post('/api/company')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(testCompany)
                 .then((res) => {
                     expect(res).to.have.status(201);
@@ -76,6 +91,7 @@ describe('Company Endpoints', function () {
         it('POST: should not add a second company', function(done) {
             chai.request(app)
                 .post('/api/company')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(testCompany)
                 .then((res) => {
                     expect(res).to.have.status(403);
@@ -95,7 +111,8 @@ describe('Company Endpoints', function () {
                 .create(testCompany)
                 .then(() => {
                     return chai.request(app)
-                        .get('/api/company');
+                        .get('/api/company')
+                        .set('Authorization', `Bearer ${jwt}`);
                 })
                 .then((res) => {
                     expect(res).to.have.status(200);

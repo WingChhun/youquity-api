@@ -3,8 +3,11 @@ const bodyParser = require('body-parser');
 
 const CompanyController = require('../controllers/CompanyController');
 
+const jwtAuth = require('../middleware/jwtAuth');
+
 const router = express.Router();
 
+router.use(jwtAuth);
 router.use(bodyParser.json());
 
 // company routes
