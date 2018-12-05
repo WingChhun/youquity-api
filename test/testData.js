@@ -41,4 +41,11 @@ const testIssuedInvestment = {
     pricePerShare: faker.random.number({min: 1, max: 50})
 };
 
-module.exports = {testCompany, testShareClass, testPendingInvestment, testIssuedInvestment, testUpdatedPendingInvestment};
+const testUser = {
+    email: faker.internet.email(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    password: faker.internet.password()
+};
+
+module.exports = {testCompany, testShareClass, testPendingInvestment, testIssuedInvestment, testUpdatedPendingInvestment, testUser};

@@ -17,6 +17,7 @@ class UserController {
         
         if (validate) {
             res.status(400).send(validate);
+            return;
         }
 
         User
