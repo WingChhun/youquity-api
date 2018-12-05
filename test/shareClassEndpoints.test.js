@@ -13,18 +13,8 @@ const Company = require('../server/models/Company');
 const { expect } = chai;
 chai.use(chaiHttp);
 
-// test company to use below
-const testCompany = { name: faker.company.companyName() };
-
-// test share class to use below
-const testShareClass = {
-    className: faker.commerce.productName(),
-    classSlug: faker.lorem.word(),
-    currentlyOffered: faker.random.boolean(),
-    authedShares: faker.random.number({min: 1, max: 1000000000}),
-    reservedShares: faker.random.number({min: 0, max: this.authedShares}),
-    currentPrice: faker.random.number({min: 1, max: 50})
-};
+// import dummy data
+const {testCompany, testShareClass} = require('./testData');
 
 let classId; // this will be used later to compare that we can get the same object back by slug
 
@@ -44,8 +34,11 @@ describe('Share Class Endpoints', function () {
     after(function (done) {
         mongoose.connection.dropDatabase()
             .then((dropped) => {
-                done();
+                return closeServer();
             })
+            .then(() => {
+                done();
+            });
     });
 
     describe('/api/company/shareClass', function () {

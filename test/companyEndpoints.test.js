@@ -12,8 +12,8 @@ const Company = require('../server/models/Company');
 const { expect } = chai;
 chai.use(chaiHttp);
 
-// test company to use below
-const testCompany = {name: 'Company Name'};
+// import dummy data
+const {testCompany} = require('./testData');
 
 
 describe('Company Endpoints', function () {
