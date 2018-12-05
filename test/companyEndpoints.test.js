@@ -73,8 +73,8 @@ describe('Company Endpoints', function () {
                     done(err);
                 })
         });
-        it('POST: should not add a second company', function() {
-            return chai.request(app)
+        it('POST: should not add a second company', function(done) {
+            chai.request(app)
                 .post('/api/company')
                 .send(testCompany)
                 .then((res) => {
@@ -83,13 +83,15 @@ describe('Company Endpoints', function () {
                 })
                 .then((count) => {
                     expect(count).to.equal(1);
+                    done();
                 })
                 .catch(err => {
                     console.error(err);
-                })
+                    done(err);
+                });
         });
-        it('GET: should return the existing company', function() {
-            return Company
+        it('GET: should return the existing company', function(done) {
+            Company
                 .create(testCompany)
                 .then(() => {
                     return chai.request(app)
@@ -98,9 +100,11 @@ describe('Company Endpoints', function () {
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body.companyData.name).to.equal(testCompany.name);
+                    done();
                 })
                 .catch((err) => {
                     console.error(err);
+                    done(err);
                 });
         });
     });

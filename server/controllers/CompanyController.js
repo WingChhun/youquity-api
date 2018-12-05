@@ -46,6 +46,7 @@ class CompanyController {
         const validate = checkForRequiredFields(requiredFields, req.body);
         if (validate) {
             res.status(400).send(validate);
+            return;
         }
         Company
             .findOne()
@@ -115,10 +116,12 @@ class CompanyController {
         const validate = checkForRequiredFields(requiredFields, req.body);
         if (validate) {
             res.status(400).send(validate);
+            return;
         }
 
         if(req.body.classSlug !== req.params.classSlug) {
             res.status(400).json({message: 'classSlug in request body must match classSlug in url parameter'}).send();
+            return;
         }
 
         const updatable = ['currentlyOffered', 'authedShares', 'reservedShares', 'currentPrice'];
