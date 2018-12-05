@@ -13,9 +13,9 @@ const { expect } = chai;
 chai.use(chaiHttp);
 
 // import dummy data
-const { testCompany, testShareClass, testPendingInvestment, testIssuedInvestment, testUpdatedPendingInvestment } = require('./testData');
+const { testCompany, testShareClass, testPendingInvestment, testIssuedInvestment, testUpdatedPendingInvestment, testUser } = require('./testData');
 
-let pendingId, issuedId;
+let pendingId, issuedIdjwt;
 
 describe('Share Endpoints', function () {
     // start server and add a company to the DB
@@ -29,7 +29,19 @@ describe('Share Endpoints', function () {
                 company.shareClasses.push(testShareClass);
                 return company.save();
             })
-            .then(() => {
+            .then((company) => {
+                // create and authenticate a user
+                return chai.request(app)
+                    .post('/api/users')
+                    .send(testUser);
+            })
+            .then((res) => {
+                return chai.request(app)
+                    .post('/api/auth/login')
+                    .send(testUser);
+            })
+            .then((res) => {
+                jwt = res.body.jwt;
                 done();
             });
     });
@@ -49,6 +61,7 @@ describe('Share Endpoints', function () {
         it('POST: should add a pending investment', function(done) {
             chai.request(app)
                 .post('/api/company/shares/pending')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(testPendingInvestment)
                 .then((res) => {
                     pendingId = res.body.id;
@@ -68,12 +81,14 @@ describe('Share Endpoints', function () {
             let{certificateTitle, ...incomplete} = testPendingInvestment;
             chai.request(app)
                 .post('/api/company/shares/pending')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(incomplete)
                 .then((res) => {
                     expect(res).to.have.status(400);
                     let {numShares, ...incomplete} = testPendingInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/pending')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -81,6 +96,7 @@ describe('Share Endpoints', function () {
                     let { shareClassSlug, ...incomplete } = testPendingInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/pending')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -88,6 +104,7 @@ describe('Share Endpoints', function () {
                     let { requestDate, ...incomplete } = testPendingInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/pending')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -95,6 +112,7 @@ describe('Share Endpoints', function () {
                     let { subsAgmt, ...incomplete } = testPendingInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/pending')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -102,6 +120,7 @@ describe('Share Endpoints', function () {
                     let { pymtRecd, ...incomplete } = testPendingInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/pending')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -118,6 +137,7 @@ describe('Share Endpoints', function () {
             brokenTestPendingInvestment.shareClassSlug = 'myBrokenSlug';
             chai.request(app)
                 .post('/api/company/shares/pending')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(brokenTestPendingInvestment)
                 .then((res) => {
                     expect(res).to.have.status(404);
@@ -131,6 +151,7 @@ describe('Share Endpoints', function () {
         it('POST: should add an issued investment', function(done) {
             chai.request(app)
                 .post('/api/company/shares/issued')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(testIssuedInvestment)
                 .then((res) => {
                     issuedId = res.body.id;
@@ -146,12 +167,14 @@ describe('Share Endpoints', function () {
             let { certificateTitle, ...incomplete } = testIssuedInvestment;
             chai.request(app)
                 .post('/api/company/shares/issued')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(incomplete)
                 .then((res) => {
                     expect(res).to.have.status(400);
                     let { numShares, ...incomplete } = testIssuedInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/issued')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -159,6 +182,7 @@ describe('Share Endpoints', function () {
                     let { shareClassSlug, ...incomplete } = testIssuedInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/issued')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -166,6 +190,7 @@ describe('Share Endpoints', function () {
                     let { certificateNum, ...incomplete } = testIssuedInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/issued')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -173,6 +198,7 @@ describe('Share Endpoints', function () {
                     let { pricePerShare, ...incomplete } = testIssuedInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/issued')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -180,6 +206,7 @@ describe('Share Endpoints', function () {
                     let { purchaseDate, ...incomplete } = testIssuedInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/issued')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -187,6 +214,7 @@ describe('Share Endpoints', function () {
                     let { issueDate, ...incomplete } = testIssuedInvestment;
                     return chai.request(app)
                         .post('/api/company/shares/issued')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -203,6 +231,7 @@ describe('Share Endpoints', function () {
             brokenTestIssuedInvestment.shareClassSlug = 'myBrokenSlug';
             chai.request(app)
                 .post('/api/company/shares/issued')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(brokenTestIssuedInvestment)
                 .then((res) => {
                     expect(res).to.have.status(404);
@@ -216,6 +245,7 @@ describe('Share Endpoints', function () {
         it('GET: should get all pending investments', function(done) {
             chai.request(app)
                 .get('/api/company/shares/pending')
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.an.instanceof(Array);
@@ -230,6 +260,7 @@ describe('Share Endpoints', function () {
         it('GET: should get all issued investments', function(done) {
             chai.request(app)
                 .get('/api/company/shares/issued')
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.an.instanceof(Array);
@@ -246,6 +277,7 @@ describe('Share Endpoints', function () {
         it('GET: should get a pending investment by id', function(done) {
             chai.request(app)
                 .get(`/api/company/shares/pending/${pendingId}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body.id).to.equal(pendingId);
@@ -259,6 +291,7 @@ describe('Share Endpoints', function () {
         it('GET: should get an issued investment by id', function(done) {
             chai.request(app)
                 .get(`/api/company/shares/issued/${issuedId}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body.id).to.equal(issuedId);
@@ -273,6 +306,7 @@ describe('Share Endpoints', function () {
             const updatedPendingWithId = {id: pendingId, ...testUpdatedPendingInvestment};
             chai.request(app)
                 .put(`/api/company/shares/pending/${pendingId}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(updatedPendingWithId)
                 .then((res) => {
                     expect(res).to.have.status(200);
@@ -295,6 +329,7 @@ describe('Share Endpoints', function () {
             const updatedPendingWithBadId = { id: issuedId, ...testUpdatedPendingInvestment };
             chai.request(app)
                 .put(`/api/company/shares/pending/${pendingId}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(updatedPendingWithBadId)
                 .then((res) => {
                     expect(res).to.have.status(400);
@@ -308,6 +343,7 @@ describe('Share Endpoints', function () {
         it('PUT: should not update pending investment if id is not specified in body', function(done) {
             chai.request(app)
                 .put(`/api/company/shares/pending/${pendingId}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(testUpdatedPendingInvestment)
                 .then((res) => {
                     expect(res).to.have.status(400);
@@ -321,6 +357,7 @@ describe('Share Endpoints', function () {
         it('DELETE: should delete a pending investment', function(done) {
             chai.request(app)
                 .delete(`/api/company/shares/pending/${pendingId}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     return Company.findOne();

@@ -14,9 +14,9 @@ const { expect } = chai;
 chai.use(chaiHttp);
 
 // import dummy data
-const {testCompany, testShareClass} = require('./testData');
+const {testCompany, testShareClass, testUser} = require('./testData');
 
-let classId; // this will be used later to compare that we can get the same object back by slug
+let classId, jwt; // this will be used later to compare that we can get the same object back by slug
 
 describe('Share Class Endpoints', function () {
     // start server and add a company to the DB
@@ -26,6 +26,18 @@ describe('Share Class Endpoints', function () {
                 return Company.create(testCompany);
             })
             .then((company) => {
+                // create and authenticate a user
+                return chai.request(app)
+                    .post('/api/users')
+                    .send(testUser);
+            })
+            .then((res) => {
+                return chai.request(app)
+                    .post('/api/auth/login')
+                    .send(testUser);
+            })
+            .then((res) => {
+                jwt = res.body.jwt;
                 done();
             });
     });
@@ -46,12 +58,14 @@ describe('Share Class Endpoints', function () {
             let {classSlug, ...incomplete} = testShareClass;
             chai.request(app)
                 .post('/api/company/shareClass')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(incomplete)
                 .then((res) => {
                     expect(res).to.have.status(400);
                     let {className, ...incomplete} = testShareClass;
                     return chai.request(app)
                         .post('/api/company/shareClass')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -59,6 +73,7 @@ describe('Share Class Endpoints', function () {
                     let {currentlyOffered, ...incomplete} = testShareClass;
                     return chai.request(app)
                         .post('/api/company/shareClass')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -66,6 +81,7 @@ describe('Share Class Endpoints', function () {
                     let { authedShares, ...incomplete } = testShareClass;
                     return chai.request(app)
                         .post('/api/company/shareClass')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -73,6 +89,7 @@ describe('Share Class Endpoints', function () {
                     let { reservedShares, ...incomplete } = testShareClass;
                     return chai.request(app)
                         .post('/api/company/shareClass')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -80,6 +97,7 @@ describe('Share Class Endpoints', function () {
                     let { currentPrice, ...incomplete } = testShareClass;
                     return chai.request(app)
                         .post('/api/company/shareClass')
+                        .set('Authorization', `Bearer ${jwt}`)
                         .send(incomplete);
                 })
                 .then((res) => {
@@ -94,6 +112,7 @@ describe('Share Class Endpoints', function () {
         it('POST: should add a share class', function(done) {
             chai.request(app)
                 .post('/api/company/shareClass')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(testShareClass)
                 .then((res) => {
                     classId = res.body.id;
@@ -115,6 +134,7 @@ describe('Share Class Endpoints', function () {
         it('POST: should not add a share class with a duplicate slug', function(done) {
             chai.request(app)
                 .post('/api/company/shareClass')
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(testShareClass)
                 .then((res) => {
                     expect(res).to.have.status(400);
@@ -128,6 +148,7 @@ describe('Share Class Endpoints', function () {
         it('GET: should get all share classes', function(done) {
             chai.request(app)
                 .get('/api/company/shareClass')
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.an.instanceOf(Array);
@@ -145,6 +166,7 @@ describe('Share Class Endpoints', function () {
         it('GET: should get a shareClass with the provided slug', function(done) {
             chai.request(app)
                 .get(`/api/company/shareClass/${testShareClass.classSlug}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .then((res) => {
                     expect(res).to.have.status(200);
                     expect(res.body.id).to.equal(classId);
@@ -166,6 +188,7 @@ describe('Share Class Endpoints', function () {
         it('PUT: should update updatable fields in a share class', function(done) {
             chai.request(app)
                 .put(`/api/company/shareClass/${testShareClass.classSlug}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(newTestShareClass)
                 .then((res) => {
                     expect(res).to.have.status(200);
@@ -185,6 +208,7 @@ describe('Share Class Endpoints', function () {
         it('PUT: should not update share class if slug does not match url param', function(done) {
             chai.request(app)
                 .put(`/api/company/shareClass/${faker.lorem.word()}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(newTestShareClass)
                 .then((res) => {
                     expect(res).to.have.status(400);
@@ -199,6 +223,7 @@ describe('Share Class Endpoints', function () {
             delete newTestShareClass.classSlug;
             chai.request(app)
                 .put(`/api/company/shareClass/${testShareClass.classSlug}`)
+                .set('Authorization', `Bearer ${jwt}`)
                 .send(newTestShareClass)
                 .then((res) => {
                     expect(res).to.have.status(400);
