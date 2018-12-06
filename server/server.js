@@ -8,6 +8,7 @@ function runServer(databaseUrl = DATABASE_URL, port = PORT) {
     return new Promise((resolve, reject) => {
         mongoose.connect(databaseUrl, { useCreateIndex: true, useNewUrlParser: true }, err => {
             if (err) {
+                console.error(err);
                 return reject(err);
             }
         })
