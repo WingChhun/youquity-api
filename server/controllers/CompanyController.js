@@ -241,7 +241,7 @@ class CompanyController {
             return;
         }
 
-        const updatable = ['certificateTitle', 'numShares', 'shareClassSlug', 'workflow'];
+        const updatable = ['certificateTitle', 'numShares', 'shareClassSlug', 'workflow', 'requestDate'];
         Company
             .findOne()
             .then((company) => {
