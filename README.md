@@ -46,7 +46,6 @@ POST /api/company (using jwt from second POST request as bearer token):
 ## Techology Used
 
 * JavaScript
-* jQuery
 * Node.js
 * MongoDB
 
